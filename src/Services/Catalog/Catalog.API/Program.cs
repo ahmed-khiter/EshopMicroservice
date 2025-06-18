@@ -20,6 +20,8 @@ builder.Services.AddMediatR(config =>
 builder.Services.AddCarter();
 
 
+
+
 builder.Services.AddMarten(opts =>
 {
     opts.Connection(builder.Configuration.GetConnectionString("Database")!);
@@ -36,6 +38,14 @@ app.MapCarter();
 
 
 app.UseExceptionHandler(option => { });
+
+var xx = app.Services.GetRequiredService<IEndpointRouteBuilder>();
+foreach (var endpoint in app.Services.GetRequiredService<IEndpointRouteBuilder>().DataSources
+             .SelectMany(ds => ds.Endpoints))
+{
+    Console.WriteLine(endpoint.DisplayName);
+}
+
 
 app.Run();
 
