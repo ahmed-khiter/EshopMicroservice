@@ -1,6 +1,7 @@
 ﻿
 using BuildingBlocks.CQRS;
 using Catalog.API.Models;
+using FluentValidation;
 
 namespace Catalog.API.Products.CreateProduct
 {
@@ -8,11 +9,24 @@ namespace Catalog.API.Products.CreateProduct
 
     public record CreateProductResult(Guid Id);
 
+    public class CreateProductValidator : AbstractValidator<CreateProductCommand>
+    {
+        public CreateProductValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Product name is required.");
+            RuleFor(x => x.Category).NotEmpty().WithMessage("At least one category is required.");
+            RuleFor(x => x.Description).NotEmpty().WithMessage("Product description is required.");
+            RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price must be greater than zero.");
+            RuleFor(x => x.iImageFile).NotEmpty().WithMessage("Image file is required.");
+        }
+    }
 
-    internal class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, CreateProductResult>
+    internal class CreateProductCommandHandler(IDocumentSession session)
+        : ICommandHandler<CreateProductCommand, CreateProductResult>
     {
         public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
         {
+
             //Create entity object from command object
             var product = new Product()
             {
@@ -25,10 +39,11 @@ namespace Catalog.API.Products.CreateProduct
 
             //TODO:
             //Save to database
-            //return CreateProductResult result 
+            session.Store(product);
+            await session.SaveChangesAsync(cancellationToken);
 
 
-            return new CreateProductResult(new Guid());
+            return new CreateProductResult(product.Id);
 
         }
     }
