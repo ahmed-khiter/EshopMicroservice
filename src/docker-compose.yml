@@ -4,6 +4,17 @@ version: '3.4'
 services:
   catalogdb:
     image: postgres
+  catalogapi:
+    build:
+      context: .
+      dockerfile: Services/Catalog/Catalog.API/Dockerfile
+    ports:
+      - "6000:8080"
+      - "6060:8081"
+    depends_on:
+      - catalogdb
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     
 volumes:
     postgres_catalog:

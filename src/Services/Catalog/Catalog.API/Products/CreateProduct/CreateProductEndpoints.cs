@@ -1,6 +1,6 @@
 ﻿namespace Catalog.API.Products.CreateProduct
 {
-    public record CreateProductRequest(string Name, List<string> Category, string Description, decimal Price, string iImageFile);
+    public record CreateProductRequest(string Name, List<string> Category, string Description, decimal Price, string ImageFile);
     public record CreateProductResponse(Guid Id);
 
 
@@ -8,7 +8,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("products", async (CreateProductRequest request, ILogger logger, ISender sender) =>
+            app.MapPost("/products", async (CreateProductRequest request, ISender sender) =>
             {
                 var command = request.Adapt<CreateProductCommand>();
 

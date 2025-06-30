@@ -1,12 +1,14 @@
-﻿namespace Catalog.API.Products.GetProducts
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Catalog.API.Products.GetProducts
 {
     public record GetProductsRequest(int? PageNumber = 1, int? PageSize = 10);
     public record GetProductsResponse(IEnumerable<Product> Products);
 
 
-    public class GetProductsEndpoints : ICarterModule
+    public class TestEndpoints : ICarterModule
     {
-        public void AddRoutes(IEndpointRouteBuilder app)
+        public async void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapGet("/products", async ([AsParameters] GetProductsRequest request, ISender sender) =>
             {
