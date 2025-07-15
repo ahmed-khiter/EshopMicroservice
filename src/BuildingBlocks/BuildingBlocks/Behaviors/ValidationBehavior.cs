@@ -3,9 +3,15 @@ using FluentValidation;
 using MediatR;
 
 namespace BuildingBlocks.Behaviors;
-public class ValidationBehavior<TRequest, TResponse>
+public class ValidationBehavior
+    // For generic input and  output
+    <TRequest, TResponse>
+    //for dependency injection of validators
     (IEnumerable<IValidator<TRequest>> validators)
-    : IPipelineBehavior<TRequest, TResponse>
+    :
+    // middleware of mediatR pipeline
+    IPipelineBehavior<TRequest, TResponse>
+    // where TRequest is a command that returns a response of type TResponse
     where TRequest : ICommand<TResponse>
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)

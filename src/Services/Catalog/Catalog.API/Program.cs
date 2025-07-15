@@ -2,8 +2,10 @@ using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
 using Catalog.API.Data;
 using FluentValidation;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var assembly = typeof(Program).Assembly;
 
 
@@ -18,9 +20,11 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 
 builder.Services.AddCarter();
 
+string? connectionString = builder.Configuration.GetConnectionString("Database")!;
+
 builder.Services.AddMarten(opts =>
 {
-    opts.Connection(builder.Configuration.GetConnectionString("Database")!);
+    opts.Connection(connectionString);
 })// use lightWeight it's the best practice in general there are also (IQuerySession- DirtyTrackedSession - IDocumentSession)
     .UseLightweightSessions();
 
@@ -30,16 +34,21 @@ if (builder.Environment.IsDevelopment())
 }
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks().AddNpgSql(connectionString);
 
 //builder.Services.AddProblemDetails(); // optional
 var app = builder.Build();
+
 //Configure the http request pipeline
 app.MapCarter();
 
 app.UseExceptionHandler(option => { });
 
-app.UseHealthChecks("/health");
+app.UseHealthChecks("/health",
+    new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
 app.Run();
 
 
