@@ -3,6 +3,12 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace BuildingBlocks.Behaviors;
+
+// <summary>
+// LoggingBehavior is a MediatR pipeline behavior that logs the start and end of request handling, including performance metrics.
+// It logs the request type, response type, and any performance warnings if the request takes longer than 3 seconds to process.
+// </summary>
+
 public class LoggingBehavior<TRequest, TResponse>
     (ILogger<LoggingBehavior<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse>

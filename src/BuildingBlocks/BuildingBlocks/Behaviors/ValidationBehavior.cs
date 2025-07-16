@@ -1,8 +1,12 @@
 ﻿using BuildingBlocks.CQRS;
 using FluentValidation;
 using MediatR;
-
 namespace BuildingBlocks.Behaviors;
+
+// <summary>
+// ValidationBehavior is a MediatR pipeline behavior that validates requests using FluentValidation.
+// It checks all validators registered for the request type and throws a ValidationException if any validation errors are found.
+// </summary>
 public class ValidationBehavior
     // For generic input and  output
     <TRequest, TResponse>
