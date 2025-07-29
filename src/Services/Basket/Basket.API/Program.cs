@@ -1,6 +1,7 @@
 
 using Basket.API.Data.Persistence;
 using BuildingBlocks.Exceptions.Handler;
+using Discount.Grpc;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Caching.Distributed;
@@ -25,6 +26,12 @@ builder.Services.AddMarten(options =>
     ShippingCartSchema.Configure(options);
 
 }).UseLightweightSessions();
+
+//Add GRPC service 
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(opt =>
+{
+    opt.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+});
 
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 //this is the way to add caching repository as decorator, which is the recommended way to do it in .NET Core 6+
